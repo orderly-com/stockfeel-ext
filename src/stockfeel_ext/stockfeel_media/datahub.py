@@ -9,8 +9,10 @@ from ..extension import stockfeel
 def handle_event_data(data):
     try:
         uid = data[kafka_headers.USER]
-        uid = base64.b64encode(uid.encode()).decode().rstrip('=')
-        data[kafka_headers.USER] = urllib.parse.quote(uid)
+        uid = urllib.parse.unquote(uid)
+        uid = uid + '=' * (-len(data) % 4)
+        uid = base64.b64decode(uid.encode())
+        data[kafka_headers.USER] = uid
     except:
         pass
 
