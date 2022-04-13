@@ -21,17 +21,18 @@ def find_reader_and_article():
     readbases_to_create = []
     for read in Read.objects.filter(path='', readbase__isnull=True).values():
         try:
+            title = read['title']
             readbase = ReadBase(
                 articlebase_id=article_map[read['title']],
                 clientbase_id=client_map[read['cid']],
-        datetime=read['datetime'],
-        attributions=read['attributions'],
-        title=read['title'],
-        path=read['path'],
-        uid=read['uid'],
-        cid=read['cid'],
-        team_id=1,
-        datasource_id=read['datasource_id']
+                datetime=read['datetime'],
+                attributions=read['attributions'],
+                title=read['title'],
+                path=f'https://www.stockfeel.com.tw/{title}/',
+                uid=read['uid'],
+                cid=read['cid'],
+                team_id=1,
+                datasource_id=read['datasource_id']
             )
             readbases_to_create.append(readbase)
             reads_to_update.append(Read(id=read['id'], readbase=readbase))
