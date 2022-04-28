@@ -4,7 +4,7 @@ AUTO_LOADS = [
     'stockfeel_media',
 ]
 
-FILE_SPECIFICATIONS = [
+DATA_SOURCES = [
 
 ]
 
