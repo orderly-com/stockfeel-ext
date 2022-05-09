@@ -10,7 +10,7 @@ def handle_event_data(data):
     try:
         uid = data[kafka_headers.USER]
         uid = urllib.parse.unquote(uid)
-        uid = uid + '=' * (-len(data) % 4)
+        uid = uid + '=' * (-len(uid) % 4)
         uid = base64.b64decode(uid.encode()).decode()
         data[kafka_headers.USER] = uid
     except:
