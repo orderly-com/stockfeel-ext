@@ -11,7 +11,7 @@ from team.models import Attribution
 
 @condition
 class AdBehaviorCondition(SingleSelectCondition):
-    NOT_IMPRESSED = None
+    NOT_IMPRESSED = 'NOT_IMPRESSED'
     IMPRESSED = 'read'
     CLICK = 'click'
     def __init__(self, *args, **kwargs):
@@ -29,10 +29,13 @@ class AdBehaviorCondition(SingleSelectCondition):
             return client_qs, Q()
 
         response_type = self.options.get('response_type')
-        params = {
-            f'attributions__{ad_id}': response_type # ad#$股感站內廣告_墊檔：加line好友（全站）0927/0207#$364: read
-        }
-        q = Q(**params)
+        if response_type == self.NOT_IMPRESSED:
+            q = ~Q(attributions__has_key=ad_id)
+        else:
+            params = {
+                f'attributions__{ad_id}': response_type # ad#$股感站內廣告_墊檔：加line好友（全站）0927/0207#$364: read
+            }
+            q = Q(**params)
 
         return client_qs, q
 
