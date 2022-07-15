@@ -4,7 +4,7 @@ from django.db.models.query import Q
 from django.db.models import QuerySet, Count, Avg, F
 
 from filtration.conditions import SingleSelectCondition, ChoiceCondition
-from filtration.models import condition
+from filtration.registries import condition
 
 from team.models import Attribution
 
