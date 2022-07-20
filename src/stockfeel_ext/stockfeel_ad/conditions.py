@@ -40,9 +40,29 @@ class AdBehaviorCondition(SingleSelectCondition):
         return client_qs, q
 
     def real_time_init(self, team, *args, **kwargs):
-        DELIMITER = '#$'
-
-        qs = Attribution.objects.filter(name__startswith=f'ad{DELIMITER}').values_list('name', flat=True)
-        data = [{'id': name, 'text': name.split(DELIMITER)[-2]} for name in qs]
+        pattern = rf'^.*#\$.*#\$(?P<type>.*)#\$(?P<platform>.*)$'
+        qs = Attribution.objects.filter(name__iregex=pattern).values_list('name', flat=True)
+        data = []
+        type_map = {
+            'overview': '長橫幅',
+            'article': '文章頁',
+            'member': '會員中心頁',
+            'rectangular': '矩形'
+        }
+        platform_map = {
+            '1': '電腦',
+            '2': '手機',
+            '3': '平板'
+        }
+        for name in qs:
+            ad, ad_name, ad_type, platform = name.split('#$')
+            ad_type = type_map.get(ad_type)
+            platform = platform_map.get(platform)
+            data.append(
+                {
+                    'id': name,
+                    'text': f'{ad_name} ({ad_type}, {platform})'
+                }
+            )
 
         self.choice(*data)
