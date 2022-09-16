@@ -44,6 +44,7 @@ class ClientActivityDistribution(BarChart):
         churning_client_count = all_clients.count() - new_client_count - silent_client_count - active_client_count
 
         self.create_label(
+            name='人數（%）',
             data=[
                 new_client_count / client_count * 100,
                 churning_client_count / client_count * 100,
