@@ -39,7 +39,7 @@ class AdBehaviorCondition(SingleSelectCondition):
 
         return client_qs, q
 
-    def real_time_init(self, team, *args, **kwargs):
+    def lazy_init(self, team, *args, **kwargs):
         pattern = rf'^.*#\$.*#\$.*#\$.$'
         qs = Attribution.objects.filter(name__iregex=pattern).values_list('name', flat=True)
         data = []
