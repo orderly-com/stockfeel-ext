@@ -9,7 +9,7 @@ from filtration.registries import condition
 from team.models import Attribution
 
 
-@condition
+@condition('廣告版位回應')
 class AdBehaviorCondition(SingleSelectCondition):
     NOT_IMPRESSED = 'NOT_IMPRESSED'
     IMPRESSED = 'read'
