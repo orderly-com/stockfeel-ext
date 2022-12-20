@@ -99,4 +99,6 @@ class QueryBehaviors(APIView):
             }
         ]
         data = aggregate_from_cerem(team.id, 'readbases', pipeline)
+        for item in data:
+            del item['_id']
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
