@@ -59,12 +59,12 @@ class ImportArticleList(APIView):
         if content_type != 'read_events':
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid content_type', 'text': 'Invalid content_type, only "read_events" is supported.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
         try:
-            min_date = parser.parse(min_date)
+            min_date = parser.parse(min_date).replace(tzinfo=timezone.get_current_timezone())
         except:
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid date given', 'text': f'{min_date} cannot be parsed as a datetime.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         try:
-            max_date = parser.parse(max_date)
+            max_date = parser.parse(max_date).replace(tzinfo=timezone.get_current_timezone())
         except:
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid date given', 'text': f'{max_date} cannot be parsed as a datetime.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
