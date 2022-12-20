@@ -13,7 +13,6 @@ from external_app.models import ExternalAppApiKey
 from cerem.tasks import aggregate_from_cerem
 
 from ..extension import stockfeel
-from .tasks import process_articlelist
 
 
 @stockfeel.api('v1/<signature>/behaviors/')
