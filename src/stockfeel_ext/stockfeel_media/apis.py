@@ -12,11 +12,11 @@ from rest_framework import status
 from external_app.models import ExternalAppApiKey
 from cerem.tasks import aggregate_from_cerem
 
-from ..extension import media_ext
+from ..extension import stockfeel
 from .tasks import process_articlelist
 
 
-@media_ext.api('v1/<signature>/behaviors/')
+@stockfeel.api('v1/<signature>/behaviors/')
 class ImportArticleList(APIView):
 
     permission_classes = [AllowAny]
