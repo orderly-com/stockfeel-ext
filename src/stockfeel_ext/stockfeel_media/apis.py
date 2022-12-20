@@ -20,7 +20,7 @@ class ImportArticleList(APIView):
 
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         now = timezone.now()
 
         signature = kwargs.get('signature')
