@@ -16,7 +16,7 @@ from ..extension import stockfeel
 
 
 @stockfeel.api('v1/<signature>/behaviors/')
-class ImportArticleList(APIView):
+class QueryBehaviors(APIView):
 
     permission_classes = [AllowAny]
 
@@ -33,12 +33,6 @@ class ImportArticleList(APIView):
 
         if not team:
             return JsonResponse({'result': False, 'msg': {'title': 'Not Valid', 'text': 'api_key is not valid or is expired.'}}, status=status.HTTP_401_UNAUTHORIZED)
-
-        if 'datasource' not in data:
-            return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': 'Datasource is missing.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-        if 'data' not in data:
-            return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': 'Data is missing.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         content_type = request.GET.get('content_type')
         min_date = request.GET.get('min_date')
