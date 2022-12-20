@@ -34,19 +34,11 @@ class ImportArticleList(APIView):
         if not team:
             return JsonResponse({'result': False, 'msg': {'title': 'Not Valid', 'text': 'api_key is not valid or is expired.'}}, status=status.HTTP_401_UNAUTHORIZED)
 
-        try:
-            data = orjson.loads(request.body.decode('utf-8'))
-        except:
-            return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': 'Data is not valid or is not well formated.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
         if 'datasource' not in data:
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': 'Datasource is missing.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         if 'data' not in data:
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': 'Data is missing.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-        if len(data['data']) > settings.BATCH_SIZE_L:
-            return JsonResponse({'result': False, 'msg': {'title': 'Invalid data', 'text': f'Max row of data per request is {settings.BATCH_SIZE_L}.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         content_type = request.GET.get('content_type')
         min_date = request.GET.get('min_date')
