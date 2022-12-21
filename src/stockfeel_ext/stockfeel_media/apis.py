@@ -12,6 +12,8 @@ from rest_framework import status
 from external_app.models import ExternalAppApiKey
 from cerem.tasks import aggregate_from_cerem
 
+from media_ext.media_media.models import ArticleBase
+
 from ..extension import stockfeel
 
 
@@ -27,12 +29,12 @@ class QueryBehaviors(APIView):
         api_key = request.headers.get('X-Api-Key')
 
         if not any([signature, api_key]):
-            return JsonResponse({'result': False, 'msg': {'title': 'Value Missing', 'text': 'Signature or api_key is missing.'}}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'result': False, 'msg': {'title': 'Missing credential values', 'text': 'Missing Signature or api_key.'}}, status=status.HTTP_400_BAD_REQUEST)
 
-        team = ExternalAppApiKey.get_team(signature, api_key)
+        team = ExternalAppApiKey.get_team(signature, api_key, can_query_dataset=True)
 
         if not team:
-            return JsonResponse({'result': False, 'msg': {'title': 'Not Valid', 'text': 'api_key is not valid or is expired.'}}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({'result': False, 'msg': {'title': 'Invalid api key', 'text': 'api key is invalid or is expired.'}}, status=status.HTTP_401_UNAUTHORIZED)
 
         content_type = request.GET.get('content_type')
         min_date = request.GET.get('min_date')
@@ -101,4 +103,38 @@ class QueryBehaviors(APIView):
         data = aggregate_from_cerem(team.id, 'readbases', pipeline)
         for item in data:
             del item['_id']
+        return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
+
+
+@stockfeel.api('v1/<signature>/post/detail/')
+class QueryPosts(APIView):
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        now = timezone.now()
+
+        signature = kwargs.get('signature')
+        api_key = request.headers.get('X-Api-Key')
+
+        if not any([signature, api_key]):
+            return JsonResponse({'result': False, 'msg': {'title': 'Missing credential values', 'text': 'Missing Signature or api_key.'}}, status=status.HTTP_400_BAD_REQUEST)
+
+        team = ExternalAppApiKey.get_team(signature, api_key, can_query_dataset=True)
+
+        if not team:
+            return JsonResponse({'result': False, 'msg': {'title': 'Invalid api key', 'text': 'api key is invalid or is expired.'}}, status=status.HTTP_401_UNAUTHORIZED)
+
+        post_id = request.GET.get('id')
+        try:
+            article = ArticleBase.objects.get(external_id=post_id)
+        except:
+            return JsonResponse({'result': False, 'msg': {'title': 'Not Found', 'text': 'Post with given id not found'}}, status=status.HTTP_404_NOT_FOUND)
+        data = {
+            'post_id': article.external_id,
+            'title': article.title,
+            'path': article.path,
+            'tags': [],
+            'attributes': []
+        }
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
