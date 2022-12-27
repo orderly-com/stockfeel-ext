@@ -130,11 +130,12 @@ class QueryPosts(APIView):
             article = ArticleBase.objects.get(external_id=post_id)
         except:
             return JsonResponse({'result': False, 'msg': {'title': 'Not Found', 'text': 'Post with given id not found'}}, status=status.HTTP_404_NOT_FOUND)
+        CATEGORY_BLACKLIST = ['轉載文', '不可對外轉載', '可付費轉載', '可自由轉載']
         data = {
             'post_id': article.external_id,
             'title': article.title,
             'path': article.path,
-            'tags': [],
-            'attributes': []
+            'tags': article.categories.exclude(name__in=CATEGORY_BLACKLIST).values_list('name', flat=True),
+            'attributes': article.attributions.get('sf_sensed_keywords', [])
         }
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
