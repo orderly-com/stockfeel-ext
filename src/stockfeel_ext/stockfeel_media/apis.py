@@ -135,7 +135,7 @@ class QueryPosts(APIView):
             'post_id': article.external_id,
             'title': article.title,
             'path': article.path,
-            'tags': article.categories.exclude(name__in=CATEGORY_BLACKLIST).values_list('name', flat=True),
+            'tags': list(article.categories.exclude(name__in=CATEGORY_BLACKLIST).values_list('name', flat=True)),
             'attributes': article.attributions.get('sf_sensed_keywords', [])
         }
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
