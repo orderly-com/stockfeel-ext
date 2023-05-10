@@ -57,4 +57,4 @@ def sync_esunsec_ids(from_datetime, to_datetime, *args, **kwargs):
                     cid=event['cid'],
                 )
             )
-    EsunsecID.objects.bulk_create(items_to_create, batch_size=settings.BATCH_SIZE, ignore_conflicts=True)
+    EsunsecID.objects.bulk_create(items_to_create, batch_size=settings.BATCH_SIZE_M, ignore_conflicts=True)
