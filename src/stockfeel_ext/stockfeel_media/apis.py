@@ -100,7 +100,7 @@ class QueryBehaviors(APIView):
                 '$project': {
                     'datetime': 1,
                     'cid': '$cid',
-                    'post_id': '$post_id',
+                    'post_id': '$articlebase_id',
                     'url': '$path'
                 }
             }
@@ -116,6 +116,12 @@ class QueryBehaviors(APIView):
                 except:
                     cid_map[item['cid']] = None
             if not cid_map[item['cid']]:
+                continue
+            try:
+                post_id = item['post_id']
+                article = ArticleBase.objects.get(id=post_id)
+                item['post_id'] = article.external_id
+            except:
                 continue
             item['member_id'] = cid_map[item['cid']]
             del item['cid']
