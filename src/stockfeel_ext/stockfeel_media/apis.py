@@ -81,10 +81,10 @@ class QueryBehaviors(APIView):
         }
         if member_id:
             try:
-                cid = EsunsecID.objects.get(esunsec_id=member_id).cid
+                cids = EsunsecID.objects.filter(esunsec_id=member_id).values_list('cid', flat=True)
+                match_stage['$match']['cid'] = {'$in': cids}
             except:
-                cid = 'invalid_cid'
-            match_stage['$match']['cid'] = cid
+                pass
         pipeline = [
             match_stage,
             {
