@@ -99,7 +99,7 @@ class QueryBehaviors(APIView):
             {
                 '$project': {
                     'datetime': 1,
-                    'member_id': '$cid',
+                    'cid': '$cid',
                     'post_id': '$post_id',
                     'url': '$path'
                 }
