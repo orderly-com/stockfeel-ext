@@ -43,15 +43,17 @@ def sync_esunsec_ids(from_datetime, to_datetime, *args, **kwargs):
         if event['target'] == 'esunsecs':
             try:
                 uid = json.loads(event['params'])['uid']
+                cid = event['cid']
             except Exception as e:
                 uid = None
+                cid = None
 
-            if not uid:
+            if not uid or not cid:
                 continue
 
             items_to_create.append(
                 EsunsecID(
-                    esunsec_id=event['params']['uid'],
+                    esunsec_id=uid,
                     cid=event['cid'],
                 )
             )
