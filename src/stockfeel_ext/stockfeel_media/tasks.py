@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.utils import timezone
 from django.conf import settings
@@ -40,6 +41,14 @@ def sync_esunsec_ids(from_datetime, to_datetime, *args, **kwargs):
             'target': row[kafka_headers.TARGET],
         }
         if event['target'] == 'esunsecs':
+            try:
+                uid = json.loads(event['params'])['uid']
+            except Exception as e:
+                uid = None
+
+            if not uid:
+                continue
+
             items_to_create.append(
                 EsunsecID(
                     esunsec_id=event['params']['uid'],
