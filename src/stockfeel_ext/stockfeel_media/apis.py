@@ -81,7 +81,7 @@ class QueryBehaviors(APIView):
         }
         if member_id:
             try:
-                cids = EsunsecID.objects.filter(esunsec_id=member_id).values_list('cid', flat=True)
+                cids = list(EsunsecID.objects.filter(esunsec_id=member_id).values_list('cid', flat=True))
                 match_stage['$match']['cid'] = {'$in': cids}
             except:
                 pass
