@@ -129,7 +129,7 @@ class QueryBehaviors(APIView):
             del item['cid']
             results.append(item)
 
-        return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
+        return JsonResponse({'result': True, 'data': results}, status=status.HTTP_200_OK)
 
 
 @stockfeel.api('v1/<signature>/post/detail/')
