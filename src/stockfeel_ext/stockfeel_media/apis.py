@@ -120,6 +120,8 @@ class QueryBehaviors(APIView):
             try:
                 post_id = item['post_id']
                 article = ArticleBase.objects.get(id=post_id)
+                if not article.external_id:
+                    continue
                 item['post_id'] = article.external_id
             except:
                 continue
