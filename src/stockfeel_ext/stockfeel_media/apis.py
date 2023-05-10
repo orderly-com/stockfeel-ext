@@ -117,7 +117,8 @@ class QueryBehaviors(APIView):
                     cid_map[item['cid']] = None
             if not cid_map[item['cid']]:
                 continue
-            item['cid'] = cid_map[item['cid']]
+            item['member_id'] = cid_map[item['cid']]
+            del item['cid']
             results.append(item)
 
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
