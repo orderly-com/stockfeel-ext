@@ -13,7 +13,7 @@ from external_app.models import ExternalAppApiKey
 from cerem.tasks import aggregate_from_cerem
 
 from media_ext.media_media.models import ArticleBase
-
+from .models import EsunsecID
 from ..extension import stockfeel
 
 
@@ -56,7 +56,7 @@ class QueryBehaviors(APIView):
         except:
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid date given', 'text': f'{max_date} cannot be parsed as a datetime.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        if not isinstance(member_id, str):
+        if member_id is not None and not isinstance(member_id, str):
             return JsonResponse({'result': False, 'msg': {'title': 'Invalid member_id', 'text': f'member_id must be a string.'}}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         try:
@@ -71,17 +71,22 @@ class QueryBehaviors(APIView):
 
         min_date = max(min_date, max_trace_to)
         max_date = max(max_date, max_trace_to)
-        pipeline = [
-            {
-                '$match': {
-                    'target': 'esunsecs',
-                    'params.uid': member_id,
-                    'datetime': {
-                        '$gte': min_date,
-                        '$lte': max_date
-                    }
+        match_stage = {
+            '$match': {
+                'datetime': {
+                    '$gte': min_date,
+                    '$lte': max_date
                 }
-            },
+            }
+        }
+        if member_id:
+            try:
+                cid = EsunsecID.objects.get(esunsec_id=member_id).cid
+            except:
+                cid = 'invalid_cid'
+            match_stage['$match']['cid'] = cid
+        pipeline = [
+            match_stage,
             {
                 '$sort': {'datetime': 1}
             },
@@ -94,15 +99,27 @@ class QueryBehaviors(APIView):
             {
                 '$project': {
                     'datetime': 1,
-                    'member_id': '$params.uid',
+                    'member_id': '$cid',
                     'post_id': '$post_id',
                     'url': '$path'
                 }
             }
         ]
         data = aggregate_from_cerem(team.id, 'readbases', pipeline)
+        cid_map = {}
+        results = []
         for item in data:
             del item['_id']
+            if item['cid'] not in cid_map:
+                try:
+                    cid_map[item['cid']] = EsunsecID.objects.get(cid=item['cid']).esunsec_id
+                except:
+                    cid_map[item['cid']] = None
+            if not cid_map[item['cid']]:
+                continue
+            item['cid'] = cid_map[item['cid']]
+            results.append(item)
+
         return JsonResponse({'result': True, 'data': data}, status=status.HTTP_200_OK)
 
 
