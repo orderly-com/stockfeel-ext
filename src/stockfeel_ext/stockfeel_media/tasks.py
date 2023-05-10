@@ -11,9 +11,9 @@ from datahub.models import DataSync
 from cerem.tasks import aggregate_from_cerem
 from .models import EsunsecID
 
-from ..extension import media_ext
+from ..extension import stockfeel
 
-@media_ext.periodic_task()
+@stockfeel.periodic_task()
 def sync_esunsec_ids(from_datetime, to_datetime, *args, **kwargs):
     team = Team.objects.first()
     hour_ago = timezone.now() - datetime.timedelta(hours=1)
