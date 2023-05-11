@@ -80,11 +80,11 @@ class QueryBehaviors(APIView):
             }
         }
         if member_id:
-            try:
-                cids = list(EsunsecID.objects.filter(esunsec_id=member_id).values_list('cid', flat=True))
-                match_stage['$match']['cid'] = {'$in': cids}
-            except:
-                pass
+            cids = list(EsunsecID.objects.filter(esunsec_id=member_id).values_list('cid', flat=True))
+            match_stage['$match']['cid'] = {'$in': cids}
+        else:
+            cids = list(EsunsecID.objects.values_list('cid', flat=True))
+            match_stage['$match']['cid'] = {'$in': cids}
         pipeline = [
             match_stage,
             {
@@ -112,7 +112,7 @@ class QueryBehaviors(APIView):
             del item['_id']
             if item['cid'] not in cid_map:
                 try:
-                    cid_map[item['cid']] = EsunsecID.objects.get(cid=item['cid']).esunsec_id
+                    cid_map[item['cid']] = EsunsecID.objects.filter(cid=item['cid']).first().esunsec_id
                 except:
                     cid_map[item['cid']] = None
             if not cid_map[item['cid']]:
