@@ -107,6 +107,7 @@ class QueryBehaviors(APIView):
         ]
         data = aggregate_from_cerem(team.id, 'readbases', pipeline)
         cid_map = {}
+        post_id_map = {}
         results = []
         for item in data:
             del item['_id']
@@ -117,14 +118,14 @@ class QueryBehaviors(APIView):
                     cid_map[item['cid']] = None
             if not cid_map[item['cid']]:
                 continue
-            try:
-                post_id = item['post_id']
-                article = ArticleBase.objects.get(id=post_id)
-                if not article.external_id:
-                    continue
-                item['post_id'] = article.external_id
-            except:
+            if item['post_id'] not in post_id_map:
+                try:
+                    post_id_map[item['post_id']] = ArticleBase.objects.get(id=item['post_id']).external_id
+                except:
+                    post_id_map[item['post_id']] = None
+            if not post_id_map[item['post_id']]:
                 continue
+            item['post_id'] = post_id_map[item['post_id']]
             item['member_id'] = cid_map[item['cid']]
             del item['cid']
             results.append(item)
