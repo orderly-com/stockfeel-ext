@@ -76,6 +76,9 @@ class QueryBehaviors(APIView):
                 'datetime': {
                     '$gte': min_date,
                     '$lte': max_date
+                },
+                'articlebase_id': {
+                    '$ne': None
                 }
             }
         }
