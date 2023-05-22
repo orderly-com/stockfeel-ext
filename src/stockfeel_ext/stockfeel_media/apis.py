@@ -62,15 +62,15 @@ class QueryBehaviors(APIView):
         try:
             limit = int(limit)
         except:
-            limit = 100
-        limit = min(limit, 100)
+            limit = 1000
+        limit = min(limit, 1000)
         try:
             offset = int(offset)
         except:
             offset = 0
 
-        min_date = max(min_date, max_trace_to)
-        max_date = max(max_date, max_trace_to)
+        # min_date = max(min_date, max_trace_to)
+        # max_date = max(max_date, max_trace_to)
         match_stage = {
             '$match': {
                 'datetime': {
