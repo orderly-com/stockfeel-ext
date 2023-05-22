@@ -63,7 +63,7 @@ class QueryBehaviors(APIView):
             limit = int(limit)
         except:
             limit = 1000
-        limit = min(limit, 1000)
+        # limit = min(limit, 1000)
         try:
             offset = int(offset)
         except:
