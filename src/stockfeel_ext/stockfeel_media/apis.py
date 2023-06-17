@@ -104,7 +104,8 @@ class QueryBehaviors(APIView):
                     'datetime': 1,
                     'cid': '$cid',
                     'post_id': '$articlebase_id',
-                    'url': '$path'
+                    'url': '$path',
+                    'action': '$action'
                 }
             }
         ]
